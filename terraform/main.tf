@@ -2,6 +2,20 @@ terraform {
   required_version = ">= 0.12"
 }
 
+data "azurerm_resource_group" "rgtf" {
+  name = "rgtf"
+}
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "existing_rg"
+    storage_account_name = "terraformstaterprod"
+    container_name       = "tfstate"
+    key                  = "prod.terraform.tfstate"
+  }
+}
+
+
+
 provider "azurerm" {
   features {
   }
@@ -40,9 +54,7 @@ sudo docker run -p 8080:80 nginx
 }
 */
 
-data "azurerm_resource_group" "rgtf" {
-  name = "rgtf"
-}
+
 # resource "azurerm_virtual_network" "vnettf" {
 #   name                = "${var.env_prefix}-vnet"
 #   location            = data.azurerm_resource_group.rgtf.location

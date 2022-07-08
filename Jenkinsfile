@@ -57,8 +57,12 @@ node {
       sh "docker push ${dockerImageTag}"
     }
 
-    stage("vm provisioning")
-    dir('terraform')
-    sh "terraform init"
-    sh "terraform apply -auto-approve"
+    stage("vm provisioning"){
+      step {
+          dir('terraform')
+          sh "terraform init"
+          sh "terraform apply -auto-approve"
+      }
+    }
+    
 }

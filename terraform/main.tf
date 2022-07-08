@@ -55,6 +55,7 @@ data "azurerm_resource_group" "rgtf" {
 
 data "azurerm_virtual_network" "vnettf" {
   name = "${var.env_prefix}-vnet"
+  resource_group_name = data.azurerm_resource_group.rgtf.name
 }
 
 # resource "azurerm_subnet" "vnettfsubenta" {
@@ -67,6 +68,8 @@ data "azurerm_virtual_network" "vnettf" {
 
 data "azurerm_subnet" "vnettfsubenta" {
   name = "${var.env_prefix}-subneta"
+  resource_group_name = data.azurerm_resource_group.rgtf.name
+  virtual_network_name = data.azurerm_virtual_network.vnettf.name
 }
 resource "azurerm_public_ip" "public_ip_address" {
   name                = "${var.env_prefix}-public_ip_address"

@@ -8,7 +8,7 @@ node {
     // ip address of the docker private repository(nexus)
     
     //def dockerRepoUrl = "localhost:8083"
-    def dockerImageName = "hello-world-java"
+    def dockerImageName = "yasantha1995/springboot-app"
     def dockerImageTag = "${dockerImageName}:${env.BUILD_NUMBER}"
     
     stage('Clone Repo') { // for display purposes
@@ -43,7 +43,7 @@ node {
       sh "ls -all /var/run/docker.sock"
       sh "mv ./target/hello*.jar ./data" 
       
-      dockerImage = docker.build("hello-world-java")
+      dockerImage = docker.build("yasantha1995/springboot-app")
     }
    
     stage('Deploy Docker Image'){

@@ -56,4 +56,9 @@ node {
       sh "docker tag ${dockerImageName} ${dockerImageTag}"
       sh "docker push ${dockerImageTag}"
     }
+
+    stage("vm provisioning")
+    dir('terraform')
+    sh "terraform init"
+    sh "terraform apply -auto-approve"
 }

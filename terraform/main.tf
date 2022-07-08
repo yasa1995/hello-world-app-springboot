@@ -39,31 +39,39 @@ sudo docker run -p 8080:80 nginx
   CUSTOM_DATA
 }
 */
-resource "azurerm_resource_group" "rgtf" {
-  name     = "rgtf"
-  location = "West Europe"
+
+data "azurerm_resource_group" "rgtf" {
+  name = "rgtf"
 }
-resource "azurerm_virtual_network" "vnettf" {
-  name                = "${var.env_prefix}-vnet"
-  location            = azurerm_resource_group.rgtf.location
-  address_space       = [var.vnet_cidr_block]
-  resource_group_name = azurerm_resource_group.rgtf.name
-  tags = {
-    "Name" = "${var.env_prefix}-vnet"
-  }
+# resource "azurerm_virtual_network" "vnettf" {
+#   name                = "${var.env_prefix}-vnet"
+#   location            = data.azurerm_resource_group.rgtf.location
+#   address_space       = [var.vnet_cidr_block]
+#   resource_group_name = data.azurerm_resource_group.rgtf.name
+#   tags = {
+#     "Name" = "${var.env_prefix}-vnet"
+#   }
+# }
+
+data "azurerm_virtual_network" "vnettf" {
+  name = "${var.env_prefix}-vnet"
 }
 
-resource "azurerm_subnet" "vnettfsubenta" {
-  name                 = "${var.env_prefix}-subneta"
-  virtual_network_name = azurerm_virtual_network.vnettf.name
-  address_prefixes     = [var.subent_cidr_block]
-  resource_group_name  = azurerm_resource_group.rgtf.name
+# resource "azurerm_subnet" "vnettfsubenta" {
+#   name                 = "${var.env_prefix}-subneta"
+#   virtual_network_name = data.azurerm_virtual_network.vnettf.name
+#   address_prefixes     = [var.subent_cidr_block]
+#   resource_group_name  = data.azurerm_resource_group.rgtf.name
 
+# }
+
+data "azurerm_subnet" "vnettfsubenta" {
+  name = "${var.env_prefix}-subneta"
 }
 resource "azurerm_public_ip" "public_ip_address" {
   name                = "${var.env_prefix}-public_ip_address"
-  resource_group_name = azurerm_resource_group.rgtf.name
-  location            = azurerm_resource_group.rgtf.location
+  resource_group_name = data.azurerm_resource_group.rgtf.name
+  location            = data.azurerm_resource_group.rgtf.location
   allocation_method   = "Static"
 
   tags = {
@@ -73,12 +81,12 @@ resource "azurerm_public_ip" "public_ip_address" {
 
 resource "azurerm_network_interface" "tfinterface" {
   name                = "${var.env_prefix}-interface"
-  location            = azurerm_resource_group.rgtf.location
-  resource_group_name = azurerm_resource_group.rgtf.name
+  location            = data.azurerm_resource_group.rgtf.location
+  resource_group_name = data.azurerm_resource_group.rgtf.name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.vnettfsubenta.id
+    subnet_id                     = data.azurerm_subnet.vnettfsubenta.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip_address.id
 
@@ -88,8 +96,8 @@ resource "azurerm_network_interface" "tfinterface" {
 
 resource "azurerm_network_security_group" "vm-nsg" {
   name                = "${var.env_prefix}-nsg"
-  location            = azurerm_resource_group.rgtf.location
-  resource_group_name = azurerm_resource_group.rgtf.name
+  location            = data.azurerm_resource_group.rgtf.location
+  resource_group_name = data.azurerm_resource_group.rgtf.name
 }
 
 resource "azurerm_network_security_rule" "vm-nsg-rule-1" {
@@ -102,7 +110,7 @@ resource "azurerm_network_security_rule" "vm-nsg-rule-1" {
   destination_port_range      = "22"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.rgtf.name
+  resource_group_name         = data.azurerm_resource_group.rgtf.name
   network_security_group_name = azurerm_network_security_group.vm-nsg.name
 }
 
@@ -117,7 +125,7 @@ resource "azurerm_network_security_rule" "vm-nsg-rule-2" {
   destination_port_range      = "8080"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.rgtf.name
+  resource_group_name         = data.azurerm_resource_group.rgtf.name
   network_security_group_name = azurerm_network_security_group.vm-nsg.name
 }
 
@@ -131,7 +139,7 @@ resource "azurerm_network_security_rule" "vm-nsg-rule-3" {
   destination_port_range      = "5000"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.rgtf.name
+  resource_group_name         = data.azurerm_resource_group.rgtf.name
   network_security_group_name = azurerm_network_security_group.vm-nsg.name
 }
 /*
@@ -143,8 +151,8 @@ data "template_file" "linux-vm-docker-setup" {
 
 resource "azurerm_linux_virtual_machine" "tfvm" {
   name                = "${var.env_prefix}-vm"
-  resource_group_name = azurerm_resource_group.rgtf.name
-  location            = azurerm_resource_group.rgtf.location
+  resource_group_name = data.azurerm_resource_group.rgtf.name
+  location            = data.azurerm_resource_group.rgtf.location
   size                = "Standard_F2"
   admin_username      = "yasantha"
   network_interface_ids = [
@@ -193,11 +201,11 @@ resource "azurerm_virtual_machine_extension" "vm-extension" {
 */
 
 output "vnet_id" {
-  value = azurerm_virtual_network.vnettf.id
+  value = data.azurerm_virtual_network.vnettf.id
 }
 
 output "subnet_id" {
-  value = azurerm_subnet.vnettfsubenta.id
+  value = data.azurerm_subnet.vnettfsubenta.id
 }
 
 output "vm-private-ip" {

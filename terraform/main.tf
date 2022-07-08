@@ -83,6 +83,12 @@ data "azurerm_subnet" "vnettfsubenta" {
   resource_group_name = data.azurerm_resource_group.rgtf.name
   virtual_network_name = data.azurerm_virtual_network.vnettf.name
 }
+
+data "azurerm_ssh_public_key" "ssh_key" {
+  resource_group_name = "existing_rg"
+  name = "ssh-deploy-key"
+  
+}
 resource "azurerm_public_ip" "public_ip_address" {
   name                = "${var.env_prefix}-public_ip_address"
   resource_group_name = data.azurerm_resource_group.rgtf.name
@@ -173,9 +179,13 @@ resource "azurerm_linux_virtual_machine" "tfvm" {
   network_interface_ids = [
     azurerm_network_interface.tfinterface.id,
   ]
-  admin_password                  = "Yasantha@1995"
-  disable_password_authentication = false
+  #admin_password                  = "Yasantha@1995"
+  #disable_password_authentication = false
 
+  admin_ssh_key {
+    username = "yasantha"
+    public_key = data.azurerm_ssh_public_key.ssh_key.public_key
+  }
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"

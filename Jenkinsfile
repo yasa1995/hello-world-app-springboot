@@ -58,14 +58,13 @@ node {
     }
 
     stage("vm provisioning"){
-      steps {
         script {
           dir('terraform') {
             sh "terraform init"
             sh "terraform apply -auto-approve"
           }
           
-        }
+        
       }
           
 

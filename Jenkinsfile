@@ -83,7 +83,7 @@ node {
         echo "Deploying docker image to production server"
         def production_server = "yasantha@${SVG_IP}"
 
-        sshagents (credentials: ['ssh-key-deploy']){
+        sshagent (credentials: ['ssh-key-deploy']){
           sh 'ssh -o StrictHostKeyChecking=no ${production_server} docker run -d -p 8080:8080 -it --rm yasantha1995/springboot-app'
 
         }

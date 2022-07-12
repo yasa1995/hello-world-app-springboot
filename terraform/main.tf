@@ -8,7 +8,7 @@ data "azurerm_resource_group" "rgtf" {
 terraform {
   backend "azurerm" {
     resource_group_name  = "existing_rg"
-    storage_account_name = "terraformstaterprod"
+    storage_account_name = "terraformstaterprod1"
     container_name       = "tfstate"
     key                  = "prod.terraform.tfstate"
   }

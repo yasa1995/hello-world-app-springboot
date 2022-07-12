@@ -12,5 +12,5 @@ echo \
     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null &&
 sudo apt-get update -y &&
 sudo apt-get install docker-ce docker-ce-cli containerd.io -y &&
+sudo usermod -aG docker yasantha &&
 sudo systemctl start docker
-docker run -d  -p 8080:8080 -it --rm yasantha1995/springboot-app

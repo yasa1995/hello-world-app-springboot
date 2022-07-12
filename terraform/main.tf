@@ -174,7 +174,7 @@ resource "azurerm_linux_virtual_machine" "tfvm" {
   name                = "${var.env_prefix}-vm"
   resource_group_name = data.azurerm_resource_group.rgtf.name
   location            = data.azurerm_resource_group.rgtf.location
-  size                = "Standard_F2"
+  size                = "Standard_DS1_v2"
   admin_username      = "yasantha"
   network_interface_ids = [
     azurerm_network_interface.tfinterface.id,

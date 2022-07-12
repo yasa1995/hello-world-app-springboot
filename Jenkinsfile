@@ -85,6 +85,7 @@ node {
         echo "${production_server}"
 
         sshagent (credentials: ['ssh-key-deploy']){
+          echo "${production_server}"
           sh 'ssh -o StrictHostKeyChecking=no yasantha@${SVG_IP} docker run -d -p 8080:8080 -it --rm yasantha1995/springboot-app'
           echo "webserver is hosted on http://${SVG_IP}:8080"
 

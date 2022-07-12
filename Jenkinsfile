@@ -59,12 +59,12 @@ node {
 
     stage("vm provisioning"){
       environment {
-        TF_VAR_env_prefix = 'prod'
+//        TF_VAR_env_prefix = 'prod'
       }
         script {
           dir('terraform') {
             sh "terraform init"
-            sh "terraform apply -auto-approve"
+            sh "terraform apply -var env_prefix=prod -auto-approve"
             SVG_IP = sh (
               script: "terraform output vm-public-ip",
               returnStdout: true

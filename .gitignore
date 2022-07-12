@@ -116,3 +116,9 @@ fabric.properties
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# Terraform state files
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/.terraform*
+**/terraform.tfvars

@@ -58,14 +58,36 @@ node {
     }
 
     stage("vm provisioning"){
+      environment {
+        TF_VAR_env_prefix = 'prod'
+      }
         script {
           dir('terraform') {
             sh "terraform init"
             sh "terraform apply -auto-approve"
+            SVG_IP = sh (
+              script: "terraform output vm-public-ip",
+              returnStdout: true
+              ).trim()
           }
       }
           
 
+    }
+
+    stage ("Deploy") {
+      script {
+        echo "waiting for server initizalition"
+        sleep(time:90, unit:'SECONDS')
+        echo "${SVG_IP}"
+        echo "Deploying docker image to production server"
+        def production_server = "yasantha@${SVG_IP}"
+
+        sshagents (['ssh-key-deploy']){
+          sh 'ssh -o StrictHostKeyChecking=no ${production_server} docker run -d -p 8080:8080 -it --rm yasantha1995/springboot-app'
+
+        }
+      }
     }
     
 }
